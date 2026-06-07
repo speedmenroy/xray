@@ -233,26 +233,48 @@
       }
     ];
 
-    const state = { theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light', region:'all', level:'all', search:'', currentId:cases[0].id, checks:{} };
+    const state = {
+      theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+      region:'all',
+      level:'all',
+      search:'',
+      currentId:cases[0].id,
+      checks:{}
+    };
+
     const $ = s => document.querySelector(s);
-    const $$ = s => [...document.querySelectorAll(s)];
 
     function setTheme(theme){
-      state.theme = theme; document.documentElement.setAttribute('data-theme', theme);
+      state.theme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
       $('#themeToggle').innerHTML = theme === 'dark'
         ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
         : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
     }
 
     function filteredCases(){
-      return cases.filter(c => (state.region === 'all' || c.region === state.region) && (state.level === 'all' || c.level === state.level) && (`${c.title} ${c.region} ${c.subtitle}`.toLowerCase().includes(state.search.toLowerCase())));
+      return cases.filter(c =>
+        (state.region === 'all' || c.region === state.region) &&
+        (state.level === 'all' || c.level === state.level) &&
+        (`${c.title} ${c.region} ${c.subtitle}`.toLowerCase().includes(state.search.toLowerCase()))
+      );
     }
 
-    function currentCase(){ return cases.find(c => c.id === state.currentId) || filteredCases()[0] || cases[0]; }
+    function currentCase(){
+      return cases.find(c => c.id === state.currentId) || filteredCases()[0] || cases[0];
+    }
+
+    function openCase(id){
+      state.currentId = id;
+      renderViewer();
+      renderCaseGrid();
+    }
 
     function renderFilters(){
       const regions = ['all', ...new Set(cases.map(c => c.region))];
-      $('#regionFilter').innerHTML = regions.map(r => `<option value="${r}">${r === 'all' ? 'All regions' : r}</option>`).join('');
+      $('#regionFilter').innerHTML = regions
+        .map(r => `<option value="${r}">${r === 'all' ? 'All regions' : r}</option>`)
+        .join('');
       $('#regionFilter').value = state.region;
       $('#levelFilter').value = state.level;
       $('#searchInput').value = state.search;
@@ -260,13 +282,16 @@
 
     function renderShortcuts(){
       const list = filteredCases().slice(0,6);
-      $('#shortcutList').innerHTML = list.map(c => `<button class="nav-btn ${state.currentId===c.id?'active':''}" data-case="${c.id}">${c.title}</button>`).join('') || '<div class="muted small">No cases match the current filters.</div>';
+      $('#shortcutList').innerHTML =
+        list.map(c => `<button class="nav-btn ${state.currentId===c.id?'active':''}" onclick="openCase('${c.id}')">${c.title}</button>`).join('')
+        || '<div class="muted small">No cases match the current filters.</div>';
     }
 
     function renderCaseGrid(){
       const data = filteredCases();
       $('#caseCount').textContent = data.length;
       $('#regionCount').textContent = state.region === 'all' ? 'All' : state.region;
+
       $('#caseGrid').innerHTML = data.map(c => `
         <article class="case-card">
           <img src="${c.image}" alt="${c.title} X-ray example" width="${c.width}" height="${c.height}" loading="lazy">
@@ -274,7 +299,7 @@
             <div class="tag">${c.tag}</div>
             <h4>${c.title}</h4>
             <p class="muted small" style="margin:var(--space-2) 0 var(--space-3)">${c.subtitle}</p>
-            <button class="btn secondary" data-case="${c.id}">Open case</button>
+            <button class="btn secondary" onclick="openCase('${c.id}')">Open case</button>
           </div>
         </article>
       `).join('') || '<div class="surface" style="padding:var(--space-6)"><p class="muted">No cases match the current filters.</p></div>';
@@ -287,33 +312,83 @@
       $('#viewerTag').textContent = c.tag;
       $('#viewerTitle').textContent = c.title;
       $('#viewerSubtitle').textContent = c.subtitle;
-      const img = $('#viewerImage'); img.src = c.image; img.alt = c.title + ' X-ray film'; img.width = c.width; img.height = c.height;
+
+      const img = $('#viewerImage');
+      img.src = c.image;
+      img.alt = c.title + ' X-ray film';
+      img.width = c.width;
+      img.height = c.height;
+
       $('#systemContent').textContent = c.system;
-      $('#clueContent').innerHTML = '<ul style="padding-left:1.1rem;display:grid;gap:var(--space-2)">' + c.clues.map(x => `<li>${x}</li>`).join('') + '</ul>';
+      $('#clueContent').innerHTML =
+        '<ul style="padding-left:1.1rem;display:grid;gap:var(--space-2)">' +
+        c.clues.map(x => `<li>${x}</li>`).join('') +
+        '</ul>';
       $('#diagnosisContent').textContent = c.diagnosis;
       $('#handoverContent').textContent = c.handover;
-      const checks = ['I reviewed the film systematically.','I can describe the key findings.','I can explain why the case matters clinically.'];
-      $('#checklist').innerHTML = checks.map((label,i)=>`<label class="check"><input type="checkbox" data-check="${c.id}:${i}" ${state.checks[`${c.id}:${i}`]?'checked':''}><span>${label}</span></label>`).join('');
+
+      const checks = [
+        'I reviewed the film systematically.',
+        'I can describe the key findings.',
+        'I can explain why the case matters clinically.'
+      ];
+
+      $('#checklist').innerHTML = checks.map((label,i) =>
+        `<label class="check"><input type="checkbox" data-check="${c.id}:${i}" ${state.checks[`${c.id}:${i}`]?'checked':''}><span>${label}</span></label>`
+      ).join('');
+
       renderShortcuts();
     }
 
     document.addEventListener('click', e => {
-      const caseBtn = e.target.closest('[data-case]');
-      if(caseBtn){ state.currentId = caseBtn.dataset.case; renderViewer(); renderCaseGrid(); }
       const panelBtn = e.target.closest('.panel > button');
-      if(panelBtn){ panelBtn.parentElement.classList.toggle('open'); }
+      if(panelBtn) panelBtn.parentElement.classList.toggle('open');
+
       const check = e.target.closest('[data-check]');
-      if(check){ state.checks[check.dataset.check] = check.checked; }
+      if(check) state.checks[check.dataset.check] = check.checked;
     });
 
-    $('#regionFilter').addEventListener('change', e => { state.region = e.target.value; renderCaseGrid(); renderViewer(); });
-    $('#levelFilter').addEventListener('change', e => { state.level = e.target.value; renderCaseGrid(); renderViewer(); });
-    $('#searchInput').addEventListener('input', e => { state.search = e.target.value; renderCaseGrid(); renderViewer(); });
-    $('#randomCaseBtn').addEventListener('click', () => { const data = filteredCases(); if(!data.length) return; state.currentId = data[Math.floor(Math.random()*data.length)].id; renderViewer(); renderCaseGrid(); });
-    $('#showCoreBtn').addEventListener('click', () => { state.level = 'core'; renderFilters(); renderCaseGrid(); renderViewer(); });
-    $('#themeToggle').addEventListener('click', () => setTheme(state.theme === 'dark' ? 'light' : 'dark'));
+    $('#regionFilter').addEventListener('change', e => {
+      state.region = e.target.value;
+      renderCaseGrid();
+      renderViewer();
+    });
 
-    setTheme(state.theme); renderFilters(); renderCaseGrid(); renderViewer();
+    $('#levelFilter').addEventListener('change', e => {
+      state.level = e.target.value;
+      renderCaseGrid();
+      renderViewer();
+    });
+
+    $('#searchInput').addEventListener('input', e => {
+      state.search = e.target.value;
+      renderCaseGrid();
+      renderViewer();
+    });
+
+    $('#randomCaseBtn').addEventListener('click', () => {
+      const data = filteredCases();
+      if(!data.length) return;
+      state.currentId = data[Math.floor(Math.random()*data.length)].id;
+      renderViewer();
+      renderCaseGrid();
+    });
+
+    $('#showCoreBtn').addEventListener('click', () => {
+      state.level = 'core';
+      renderFilters();
+      renderCaseGrid();
+      renderViewer();
+    });
+
+    $('#themeToggle').addEventListener('click', () => {
+      setTheme(state.theme === 'dark' ? 'light' : 'dark');
+    });
+
+    setTheme(state.theme);
+    renderFilters();
+    renderCaseGrid();
+    renderViewer();
   </script>
 </body>
 </html>
