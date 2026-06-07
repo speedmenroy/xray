@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>X-ray Case Lab</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&f[]=boska@400,500,700&display=swap" rel="stylesheet">
+  <style>
+    :root,[data-theme="light"]{
+      --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);--text-sm:clamp(.875rem,.8rem + .35vw,1rem);--text-base:clamp(1rem,.95rem + .25vw,1.125rem);--text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);--text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);--text-2xl:clamp(2rem,1.2rem + 2.5vw,3.5rem);
+      --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;
+      --color-bg:#f7f6f2;--color-surface:#f9f8f5;--color-surface-2:#fbfbf9;--color-surface-offset:#f3f0ec;--color-border:#d4d1ca;--color-text:#28251d;--color-text-muted:#6e6c64;--color-text-faint:#aaa79f;--color-text-inverse:#faf8f2;--color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-highlight:#cedcd8;--color-blue:#006494;--color-warning:#964219;--color-success:#437a22;--radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;--shadow-sm:0 1px 2px rgba(40,37,29,.06);--shadow-md:0 12px 30px rgba(40,37,29,.09);--font-display:'Boska','Georgia',serif;--font-body:'Satoshi','Inter',sans-serif;--transition:180ms cubic-bezier(.16,1,.3,1)
+    }
+    [data-theme="dark"]{--color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#201f1d;--color-surface-offset:#242320;--color-border:#393836;--color-text:#ece9e1;--color-text-muted:#b2aea5;--color-text-faint:#77746d;--color-text-inverse:#171614;--color-primary:#4f98a3;--color-primary-hover:#227f8b;--color-primary-highlight:#2d3b3c;--color-blue:#7ab2df;--color-warning:#dc986f;--color-success:#7dbe56;--shadow-sm:0 1px 2px rgba(0,0,0,.2);--shadow-md:0 12px 30px rgba(0,0,0,.32)}
+    *{box-sizing:border-box;margin:0;padding:0} html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased} body{font-family:var(--font-body);font-size:var(--text-base);line-height:1.6;background:var(--color-bg);color:var(--color-text);min-height:100dvh} img,svg{display:block;max-width:100%;height:auto} button,input,select{font:inherit;color:inherit} button{cursor:pointer;border:none;background:none} a{text-decoration:none;color:inherit} :focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)} .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+    .app{display:grid;grid-template-columns:300px 1fr;min-height:100dvh}.sidebar{position:sticky;top:0;height:100dvh;overflow:auto;background:linear-gradient(180deg,var(--color-surface),var(--color-surface-2));border-right:1px solid color-mix(in oklab,var(--color-text) 10%,transparent);padding:var(--space-6)}.main{padding:clamp(var(--space-4),2vw,var(--space-8));display:grid;gap:var(--space-6)}
+    .brand{display:flex;gap:var(--space-3);align-items:center;margin-bottom:var(--space-6)} .brand svg{width:48px;height:48px;color:var(--color-primary)} .brand h1{font-family:var(--font-display);font-size:var(--text-xl);line-height:1}.brand p{font-size:var(--text-sm);color:var(--color-text-muted)}
+    .surface,.hero,.case-card,.viewer,.side-card,.stat{background:var(--color-surface);border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)}
+    .surface,.side-card,.viewer{padding:var(--space-4)} .hero{padding:clamp(var(--space-5),3vw,var(--space-8));display:grid;grid-template-columns:1.15fr .85fr;gap:var(--space-6);align-items:center;background:radial-gradient(circle at top right,color-mix(in oklab,var(--color-primary) 12%,transparent),transparent 40%),var(--color-surface)}
+    .eyebrow{font-size:var(--text-sm);text-transform:uppercase;letter-spacing:.12em;color:var(--color-primary);margin-bottom:var(--space-3)} h2{font-family:var(--font-display);font-size:var(--text-2xl);line-height:1.02;max-width:12ch;margin-bottom:var(--space-3)} .muted{color:var(--color-text-muted)}
+    .controls{display:grid;gap:var(--space-3);margin-bottom:var(--space-4)} .label{font-size:var(--text-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:6px} select,.search{width:100%;min-height:44px;background:var(--color-surface-offset);border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent);border-radius:var(--radius-lg);padding:0 var(--space-3)}
+    .theme-btn,.btn,.tag,.nav-btn{transition:all var(--transition)} .theme-btn,.btn,.nav-btn{min-height:44px;padding:0 var(--space-4);border-radius:var(--radius-full);display:inline-flex;align-items:center;justify-content:center;gap:10px;border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent)} .btn.primary{background:var(--color-primary);color:var(--color-text-inverse);border-color:transparent}.btn.secondary,.nav-btn,.theme-btn{background:var(--color-surface-2)}
+    .sidebar-actions,.hero-actions{display:flex;gap:var(--space-3);flex-wrap:wrap}.list{display:grid;gap:var(--space-2)} .nav-btn{text-align:left;justify-content:flex-start;width:100%}.nav-btn.active{background:var(--color-primary-highlight);border-color:color-mix(in oklab,var(--color-primary) 28%,transparent)}
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-4)} .stat{padding:var(--space-4)} .stat strong{font-size:var(--text-xl);line-height:1}
+    .workspace{display:grid;grid-template-columns:1.1fr .9fr;gap:var(--space-6)} .case-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)} .case-card{overflow:hidden} .case-card img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--color-surface-offset)} .case-card .body{padding:var(--space-4)} .tag{display:inline-flex;padding:6px 10px;border-radius:var(--radius-full);font-size:var(--text-xs);background:var(--color-surface-offset);color:var(--color-text-muted);border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent);margin-bottom:var(--space-2)}
+    .viewer img{width:100%;border-radius:var(--radius-lg);background:var(--color-surface-offset)} .detail{display:grid;gap:var(--space-4)} .accordion{display:grid;gap:var(--space-3)} .panel{background:var(--color-surface-offset);border-radius:var(--radius-lg);padding:var(--space-3)} .panel button{width:100%;display:flex;justify-content:space-between;align-items:center;text-align:left;font-weight:700}.panel-content{display:none;padding-top:var(--space-3);color:var(--color-text-muted)} .panel.open .panel-content{display:block}
+    .checklist{display:grid;gap:var(--space-3)} .check{display:flex;gap:var(--space-3);align-items:flex-start;padding:var(--space-3);background:var(--color-surface-offset);border-radius:var(--radius-lg)} .check input{margin-top:4px;width:18px;height:18px;accent-color:var(--color-primary)}
+    .small{font-size:var(--text-sm)} .films{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-4)} .film{background:var(--color-surface);border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent);border-radius:var(--radius-xl);padding:var(--space-4)} .film img{border-radius:var(--radius-lg);aspect-ratio:4/3;object-fit:cover;width:100%;background:var(--color-surface-offset)}
+    @media (max-width:1024px){.app,.hero,.workspace{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.case-grid,.films,.stats{grid-template-columns:1fr 1fr}} @media (max-width:680px){.case-grid,.films,.stats{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" aria-label="X-ray Case Lab logo"><circle cx="24" cy="24" r="20"></circle><path d="M14 32 24 14l10 18"></path><path d="M18 28h12"></path><path d="M24 14v20"></path></svg>
+        <div><h1>X-ray Case Lab</h1><p>Case-based self-study for plain films</p></div>
+      </div>
+      <div class="surface" style="margin-bottom:var(--space-4)">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:var(--space-3)">
+          <div><strong>Theme</strong><div class="small muted">Light or dark mode</div></div>
+          <button class="theme-btn" id="themeToggle" aria-label="Toggle theme"></button>
+        </div>
+      </div>
+      <div class="controls surface">
+        <div>
+          <div class="label">Region</div>
+          <select id="regionFilter"></select>
+        </div>
+        <div>
+          <div class="label">Level</div>
+          <select id="levelFilter">
+            <option value="all">All levels</option>
+            <option value="foundation">Foundation</option>
+            <option value="core">Core</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+        <div>
+          <div class="label">Search</div>
+          <input id="searchInput" class="search" type="search" placeholder="Search chest, bowel, hip, fracture...">
+        </div>
+      </div>
+      <div class="side-card" style="margin-top:var(--space-4)">
+        <strong>Case shortcuts</strong>
+        <div class="list" id="shortcutList" style="margin-top:var(--space-3)"></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <div>
+          <div class="eyebrow">Built fresh</div>
+          <h2>Study X-ray cases like a mini learning station</h2>
+          <p class="muted">This is a completely new web app. Instead of a lesson-by-lesson handbook, it works like a case lab: choose a region, open a film, review clues, reveal the answer, and practise your handover wording.</p>
+          <div class="hero-actions" style="margin-top:var(--space-5)">
+            <button class="btn primary" id="randomCaseBtn">Open random case</button>
+            <button class="btn secondary" id="showCoreBtn">Show core cases</button>
+          </div>
+        </div>
+        <div class="surface" style="background:linear-gradient(180deg,color-mix(in oklab,var(--color-primary) 8%,transparent),transparent),var(--color-surface-offset)">
+          <svg viewBox="0 0 500 300" fill="none" aria-hidden="true">
+            <rect x="14" y="14" width="472" height="272" rx="24" fill="currentColor" opacity="0.05"/>
+            <rect x="34" y="34" width="220" height="232" rx="18" fill="currentColor" opacity="0.08"/>
+            <rect x="274" y="34" width="192" height="108" rx="18" fill="currentColor" opacity="0.08"/>
+            <rect x="274" y="158" width="192" height="108" rx="18" fill="currentColor" opacity="0.08"/>
+            <circle cx="144" cy="116" r="44" stroke="currentColor" opacity="0.3" stroke-width="2"/>
+            <path d="M144 72v88M100 116h88" stroke="currentColor" opacity="0.3" stroke-width="2"/>
+            <path d="M98 194h92M114 214h60M104 234h80" stroke="currentColor" opacity="0.3" stroke-width="3" stroke-linecap="round"/>
+            <path d="M334 88h72M334 108h50M330 206h82M330 226h112" stroke="currentColor" opacity="0.22" stroke-width="8" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </section>
+
+      <section class="stats">
+        <article class="stat"><div class="small muted">Visible cases</div><strong id="caseCount">0</strong></article>
+        <article class="stat"><div class="small muted">Current region</div><strong id="regionCount">All</strong></article>
+        <article class="stat"><div class="small muted">Current case</div><strong id="currentLabel">—</strong></article>
+      </section>
+
+      <section class="workspace">
+        <section>
+          <div class="surface" style="margin-bottom:var(--space-4)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-3);flex-wrap:wrap">
+              <div>
+                <div class="tag">Case list</div>
+                <h3 style="font-size:var(--text-lg)">Choose a film to review</h3>
+                <p class="muted small">Cases below stay filtered by region, level, and search terms.</p>
+              </div>
+            </div>
+          </div>
+          <div class="case-grid" id="caseGrid"></div>
+        </section>
+
+        <aside class="viewer" id="viewer">
+          <div class="detail">
+            <div>
+              <div class="tag" id="viewerTag">Case</div>
+              <h3 id="viewerTitle" style="font-size:var(--text-xl);line-height:1.1">Select a case</h3>
+              <p id="viewerSubtitle" class="muted">Open any case card to see the film and interactive explanation.</p>
+            </div>
+            <img id="viewerImage" src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/01cb2b3880ca5f8e6b573e02c900a0c1f5ce7567.jpg" alt="X-ray film viewer placeholder" width="630" height="630" loading="lazy">
+            <div class="accordion">
+              <div class="panel open">
+                <button type="button">Systematic approach <span>+</span></button>
+                <div class="panel-content" id="systemContent"></div>
+              </div>
+              <div class="panel">
+                <button type="button">Key clues <span>+</span></button>
+                <div class="panel-content" id="clueContent"></div>
+              </div>
+              <div class="panel">
+                <button type="button">Likely diagnosis <span>+</span></button>
+                <div class="panel-content" id="diagnosisContent"></div>
+              </div>
+              <div class="panel">
+                <button type="button">Escalation / handover <span>+</span></button>
+                <div class="panel-content" id="handoverContent"></div>
+              </div>
+            </div>
+            <div>
+              <div class="label">Self-check</div>
+              <div class="checklist" id="checklist"></div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="surface">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-4)">
+          <div>
+            <div class="tag">Film library</div>
+            <h3 style="font-size:var(--text-lg)">Reference films</h3>
+            <p class="muted small">These sample films mirror high-yield topics: normal chest anatomy, abdominal obstruction, and hip fracture review.</p>
+          </div>
+        </div>
+        <div class="films">
+          <article class="film">
+            <h4>Normal chest film</h4>
+            <img src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/01cb2b3880ca5f8e6b573e02c900a0c1f5ce7567.jpg" alt="Normal chest radiograph" width="630" height="630" loading="lazy">
+            <p class="muted small" style="margin-top:var(--space-3)">Use it to practise trachea, lung fields, heart size, diaphragm, and bony review.</p>
+          </article>
+          <article class="film">
+            <h4>Abdominal obstruction film</h4>
+            <img src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/dd1d72528aed102a29590c72bf01107938b5fb80.jpg" alt="Abdominal radiograph showing small bowel obstruction" width="900" height="464" loading="lazy">
+            <p class="muted small" style="margin-top:var(--space-3)">Review bowel calibre, central loop pattern, and how obstruction differs from a normal gas pattern.</p>
+          </article>
+          <article class="film">
+            <h4>Hip fracture film</h4>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Cdm_hip_fracture_343.jpg" alt="Pelvis and hip radiograph showing femoral neck fracture" width="2367" height="1793" loading="lazy">
+            <p class="muted small" style="margin-top:var(--space-3)">Trace the femoral head, neck cortex, trabecular pattern, and Shenton line.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const cases = [
+      {
+        id:'cxr-normal', title:'Normal chest film', region:'Chest', level:'foundation',
+        tag:'Chest • Foundation', subtitle:'Practise a safe baseline read before you move to pathology.',
+        image:'https://pplx-res.cloudinary.com/image/upload/pplx_search_images/01cb2b3880ca5f8e6b573e02c900a0c1f5ce7567.jpg', width:630, height:630,
+        system:'Use RIPE first: rotation, inspiration, penetration, and exposure. Then move through airway, lungs, pleura, heart, diaphragm, and bones.',
+        clues:['Trachea is central.','Lungs are clear and symmetrical.','Heart size is not enlarged.','Costophrenic angles are sharp.'],
+        diagnosis:'No acute cardiopulmonary abnormality is seen on this example film.',
+        handover:'“This is a chest film with acceptable quality. Trachea is central, lungs are clear, heart size is not enlarged, and there is no focal opacity, pleural effusion, or pneumothorax.”'
+      },
+      {
+        id:'cxr-left-lower', title:'Left lower lobe consolidation review area', region:'Chest', level:'core',
+        tag:'Chest • Core', subtitle:'A case reminder that pathology may hide behind the heart shadow.',
+        image:'https://pplx-res.cloudinary.com/image/upload/pplx_search_images/9b205d8ef8add1ec666714d65e36e4b8ac91c896.jpg', width:900, height:510,
+        system:'Start with film quality, then deliberately review the apices, behind the heart, and both costophrenic angles before concluding that the film is normal.',
+        clues:['Dense area behind the heart can hide lower lobe disease.','Loss of hemidiaphragm clarity suggests adjacent consolidation.','Small reactive pleural fluid may coexist.'],
+        diagnosis:'Suspicious for left lower lobe consolidation with possible small reactive effusion.',
+        handover:'“There is increased density behind the heart with reduced definition of the left hemidiaphragm, concerning for left lower lobe consolidation, and a small associated effusion may be present.”'
+      },
+      {
+        id:'axr-sbo', title:'Small bowel obstruction pattern', region:'Abdomen', level:'core',
+        tag:'Abdomen • Core', subtitle:'One of the key abdominal plain-film emergencies.',
+        image:'https://pplx-res.cloudinary.com/image/upload/pplx_search_images/dd1d72528aed102a29590c72bf01107938b5fb80.jpg', width:900, height:464,
+        system:'Review bowel gas pattern first. Ask whether loops are central or peripheral, whether valvulae cross the full width of the bowel, and whether there is diffuse or focal dilatation.',
+        clues:['Dilated central loops favour small bowel.','Valvulae conniventes may be seen across the full width.','The overall pattern is more important than one single loop.'],
+        diagnosis:'Features are compatible with small bowel obstruction.',
+        handover:'“The abdominal film shows centrally distributed dilated small-bowel loops with an obstructive pattern, which is concerning for small bowel obstruction in the current clinical context.”'
+      },
+      {
+        id:'axr-lbo', title:'Large bowel obstruction pattern', region:'Abdomen', level:'advanced',
+        tag:'Abdomen • Advanced', subtitle:'Differentiate colonic dilatation from small bowel pattern recognition.',
+        image:'https://pplx-res.cloudinary.com/image/upload/pplx_search_images/697f72e0ebd289c2879388cde64db185c874a945.jpg', width:900, height:525,
+        system:'Compare bowel position, calibre, and haustral appearance. Scan the whole colon and note where the gas pattern stops.',
+        clues:['Dilated colon is usually more peripheral.','Look for a cut-off point.','Large bowel pattern can coexist with small bowel dilatation if the ileocaecal valve is incompetent.'],
+        diagnosis:'Large bowel obstruction pattern.',
+        handover:'“There is marked colonic dilatation with an obstructive large-bowel pattern, and the site of transition should be considered clinically and with further imaging.”'
+      },
+      {
+        id:'hip-fracture', title:'Femoral neck fracture', region:'Lower limb', level:'core',
+        tag:'Lower limb • Core', subtitle:'A must-not-miss injury in older adults after a fall.',
+        image:'https://upload.wikimedia.org/wikipedia/commons/1/11/Cdm_hip_fracture_343.jpg', width:2367, height:1793,
+        system:'On the AP pelvis, inspect both hips side-by-side. Trace the femoral head, neck cortex, trabeculae, and Shenton line before deciding the film is normal.',
+        clues:['Cortical irregularity at the femoral neck.','Disruption of the normal smooth contour may be present.','Trabecular pattern can also look abnormal on the injured side.'],
+        diagnosis:'Femoral neck fracture / hip fracture.',
+        handover:'“After a fall, the patient cannot bear weight. The pelvis and hip film shows a suspected femoral neck fracture, which requires urgent medical and orthopaedic review.”'
+      },
+      {
+        id:'hip-comparison', title:'Subtle hip fracture by side-to-side comparison', region:'Lower limb', level:'advanced',
+        tag:'Lower limb • Advanced', subtitle:'A reminder to compare both sides when the fracture is subtle.',
+        image:'https://pplx-res.cloudinary.com/image/upload/pplx_search_images/a9de37b6bb5430fe3b7c40501b3da261a3f591b7.jpg', width:1280, height:720,
+        system:'Use both hips for comparison. Small differences in cortical contour or trabecular pattern become more obvious when you compare the symptomatic side with the asymptomatic side.',
+        clues:['Subtle femoral-neck cortical irregularity.','Comparison increases confidence.','Clinical inability to weight-bear matters even if the film is only subtly abnormal.'],
+        diagnosis:'Likely femoral neck fracture requiring escalation.',
+        handover:'“Compared with the opposite side, the symptomatic hip shows subtle femoral-neck irregularity and fracture should be considered, especially as the patient cannot bear weight.”'
+      }
+    ];
+
+    const state = { theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light', region:'all', level:'all', search:'', currentId:cases[0].id, checks:{} };
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+
+    function setTheme(theme){
+      state.theme = theme; document.documentElement.setAttribute('data-theme', theme);
+      $('#themeToggle').innerHTML = theme === 'dark'
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    }
+
+    function filteredCases(){
+      return cases.filter(c => (state.region === 'all' || c.region === state.region) && (state.level === 'all' || c.level === state.level) && (`${c.title} ${c.region} ${c.subtitle}`.toLowerCase().includes(state.search.toLowerCase())));
+    }
+
+    function currentCase(){ return cases.find(c => c.id === state.currentId) || filteredCases()[0] || cases[0]; }
+
+    function renderFilters(){
+      const regions = ['all', ...new Set(cases.map(c => c.region))];
+      $('#regionFilter').innerHTML = regions.map(r => `<option value="${r}">${r === 'all' ? 'All regions' : r}</option>`).join('');
+      $('#regionFilter').value = state.region;
+      $('#levelFilter').value = state.level;
+      $('#searchInput').value = state.search;
+    }
+
+    function renderShortcuts(){
+      const list = filteredCases().slice(0,6);
+      $('#shortcutList').innerHTML = list.map(c => `<button class="nav-btn ${state.currentId===c.id?'active':''}" data-case="${c.id}">${c.title}</button>`).join('') || '<div class="muted small">No cases match the current filters.</div>';
+    }
+
+    function renderCaseGrid(){
+      const data = filteredCases();
+      $('#caseCount').textContent = data.length;
+      $('#regionCount').textContent = state.region === 'all' ? 'All' : state.region;
+      $('#caseGrid').innerHTML = data.map(c => `
+        <article class="case-card">
+          <img src="${c.image}" alt="${c.title} X-ray example" width="${c.width}" height="${c.height}" loading="lazy">
+          <div class="body">
+            <div class="tag">${c.tag}</div>
+            <h4>${c.title}</h4>
+            <p class="muted small" style="margin:var(--space-2) 0 var(--space-3)">${c.subtitle}</p>
+            <button class="btn secondary" data-case="${c.id}">Open case</button>
+          </div>
+        </article>
+      `).join('') || '<div class="surface" style="padding:var(--space-6)"><p class="muted">No cases match the current filters.</p></div>';
+    }
+
+    function renderViewer(){
+      const c = currentCase();
+      state.currentId = c.id;
+      $('#currentLabel').textContent = c.title;
+      $('#viewerTag').textContent = c.tag;
+      $('#viewerTitle').textContent = c.title;
+      $('#viewerSubtitle').textContent = c.subtitle;
+      const img = $('#viewerImage'); img.src = c.image; img.alt = c.title + ' X-ray film'; img.width = c.width; img.height = c.height;
+      $('#systemContent').textContent = c.system;
+      $('#clueContent').innerHTML = '<ul style="padding-left:1.1rem;display:grid;gap:var(--space-2)">' + c.clues.map(x => `<li>${x}</li>`).join('') + '</ul>';
+      $('#diagnosisContent').textContent = c.diagnosis;
+      $('#handoverContent').textContent = c.handover;
+      const checks = ['I reviewed the film systematically.','I can describe the key findings.','I can explain why the case matters clinically.'];
+      $('#checklist').innerHTML = checks.map((label,i)=>`<label class="check"><input type="checkbox" data-check="${c.id}:${i}" ${state.checks[`${c.id}:${i}`]?'checked':''}><span>${label}</span></label>`).join('');
+      renderShortcuts();
+    }
+
+    document.addEventListener('click', e => {
+      const caseBtn = e.target.closest('[data-case]');
+      if(caseBtn){ state.currentId = caseBtn.dataset.case; renderViewer(); renderCaseGrid(); }
+      const panelBtn = e.target.closest('.panel > button');
+      if(panelBtn){ panelBtn.parentElement.classList.toggle('open'); }
+      const check = e.target.closest('[data-check]');
+      if(check){ state.checks[check.dataset.check] = check.checked; }
+    });
+
+    $('#regionFilter').addEventListener('change', e => { state.region = e.target.value; renderCaseGrid(); renderViewer(); });
+    $('#levelFilter').addEventListener('change', e => { state.level = e.target.value; renderCaseGrid(); renderViewer(); });
+    $('#searchInput').addEventListener('input', e => { state.search = e.target.value; renderCaseGrid(); renderViewer(); });
+    $('#randomCaseBtn').addEventListener('click', () => { const data = filteredCases(); if(!data.length) return; state.currentId = data[Math.floor(Math.random()*data.length)].id; renderViewer(); renderCaseGrid(); });
+    $('#showCoreBtn').addEventListener('click', () => { state.level = 'core'; renderFilters(); renderCaseGrid(); renderViewer(); });
+    $('#themeToggle').addEventListener('click', () => setTheme(state.theme === 'dark' ? 'light' : 'dark'));
+
+    setTheme(state.theme); renderFilters(); renderCaseGrid(); renderViewer();
+  </script>
+</body>
+</html>
